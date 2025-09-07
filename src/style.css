@@ -94,3 +94,66 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+
+
+:root {
+  font-family: sans-serif;
+}
+
+.draggable {
+  cursor: grab;
+
+  &.dragging {
+    cursor: grabbing;
+  }
+}
+.dragging {
+  cursor: grabbing;
+}
+
+svg {
+  background: whitesmoke;
+
+  .stock {
+    & > rect {
+      fill: white;
+      stroke: black;
+      stroke-width: 2;
+    }
+
+    & > text {
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+  }
+
+  .flow {
+    & > path {
+      fill: white;
+      stroke: black;
+      stroke-width: 2;
+    }
+  }
+
+  .source-sink {
+    fill: white;
+    stroke: black;
+    stroke-width: 2;
+  }
+
+  input[type="text"] {
+    background: white;
+    font-size: 1em;
+    color: green;
+    border: none;
+    padding: 0;
+    text-align: center;
+  }
+
+  line {
+    stroke: black;
+    stroke-width: 2;
+  }
+}

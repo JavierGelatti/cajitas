@@ -51,7 +51,7 @@ export class Cajita {
     }
 
     private _transformString() {
-        const posición = this._box.position;
-        return `translate(${(posición.x)}, ${(posición.y)})`;
+        const posición = this._box.position.round();
+        return `translate(${posición.x}, ${posición.y})`;
     }
 }

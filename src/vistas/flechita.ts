@@ -27,8 +27,8 @@ export class Flechita {
     }
 
     private _actualizar() {
-        const p1 = this._connector.startPoint;
-        const p2 = this._connector.endPoint;
+        const p1 = this._connector.startPoint.round();
+        const p2 = this._connector.endPoint.round();
         this._elemento.setAttribute("x1", String(p1.x));
         this._elemento.setAttribute("y1", String(p1.y));
         this._elemento.setAttribute("x2", String(p2.x));

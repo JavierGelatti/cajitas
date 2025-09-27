@@ -10,11 +10,10 @@ export class Cajita {
     constructor(ancho: number, alto: number, posicion: Position) {
         this._box = new Box(ancho, alto, posicion);
         this._elemento = createSvgElement("rect", {
+            class: "cajita",
             width: this._box.width,
             height: this._box.height,
             transform: this._transformString(),
-            stroke: "black",
-            fill: "white",
         });
         this._box.addEventListener("translate", () => this._actualizarPosicion());
 

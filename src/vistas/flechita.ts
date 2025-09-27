@@ -17,7 +17,7 @@ export class Flechita {
             this._cajitaDestino.box.nearestFixedAnchor(),
         );
 
-        this._elemento = createSvgElement("line");
+        this._elemento = createSvgElement("line", { class: "flechita" });
         this._connector.addEventListener("change", () => this._actualizar());
         this._actualizar();
     }

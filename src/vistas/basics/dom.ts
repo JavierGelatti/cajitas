@@ -43,7 +43,6 @@ type SVGAttributesMap = {
         height: number,
     },
     "g": {
-        class: string,
         transform: string,
     },
     "rect": {
@@ -74,7 +73,9 @@ type SVGAttributesMap = {
 };
 
 
-type SVGAttributes<K extends keyof SVGElementTagNameMap> = K extends keyof SVGAttributesMap ? SVGAttributesMap[K] : `UNKNOWN TAG: ${K}`;
+type SVGAttributes<K extends keyof SVGElementTagNameMap> = K extends keyof SVGAttributesMap
+    ? SVGAttributesMap[K] & { class: string }
+    : `UNKNOWN TAG: ${K}`;
 
 export function createSvgElement<K extends keyof SVGElementTagNameMap>(
     tagName: K, attributes: Partial<SVGAttributes<K>> = {}, children: (Node | string)[] = [],

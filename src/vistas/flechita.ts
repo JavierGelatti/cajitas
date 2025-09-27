@@ -1,6 +1,7 @@
 import type {StraightConnector} from "../model/connector.ts";
 import {Cajita} from "./cajita.ts";
 import {createSvgElement} from "./basics/dom.ts";
+import {Anchor} from "../model/anchor.ts";
 
 export class Flechita {
     private readonly _elemento: SVGLineElement;
@@ -13,8 +14,8 @@ export class Flechita {
         this._cajitaDestino = cajitaDestino;
         this._connector = this._cajitaOrigen.box.straightConnectorTo(
             this._cajitaDestino.box,
-            this._cajitaOrigen.box.nearestFixedAnchor(),
-            this._cajitaDestino.box.nearestFixedAnchor(),
+            Anchor.nearest(),
+            Anchor.nearest(),
         );
 
         this._elemento = createSvgElement("line", { class: "flechita" });

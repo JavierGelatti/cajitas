@@ -1,22 +1,24 @@
-import {point, Position} from "./position.ts";
+import {point, Position} from "../../model/position.ts";
 
 export type PointerEventType
-    = 'pointerover'
-    | 'pointerenter'
-    | 'pointerdown'
-    | 'pointermove'
-    | 'pointerup'
-    | 'pointercancel'
-    | 'pointerout'
-    | 'pointerleave'
+    = "pointerover"
+    | "pointerenter"
+    | "pointerdown"
+    | "pointermove"
+    | "pointerup"
+    | "pointercancel"
+    | "pointerout"
+    | "pointerleave"
 
 export type ClientLocation = { clientX: number, clientY: number };
 
 export function createElement<K extends keyof HTMLElementTagNameMap>(
-    tagName: K, properties: Partial<Omit<HTMLElementTagNameMap[K], "style"> & { style: Partial<CSSStyleDeclaration> }> = {}, children: (Node | string)[] = [],
+    tagName: K, properties: Partial<Omit<HTMLElementTagNameMap[K], "style"> & {
+        style: Partial<CSSStyleDeclaration>
+    }> = {}, children: (Node | string)[] = [],
 ) {
     const newElement = document.createElement(tagName);
-    const { style, ...propertiesWithoutStyle } = properties;
+    const {style, ...propertiesWithoutStyle} = properties;
     Object.assign(newElement, propertiesWithoutStyle);
     if (style) Object.assign(newElement.style, style);
     newElement.append(...children);
@@ -86,8 +88,8 @@ export function createSvgElement<K extends keyof SVGElementTagNameMap>(
 }
 
 function addEventListener<E extends HTMLElement | SVGElement, K extends keyof (HTMLElementEventMap & SVGElementEventMap)>(
-  element: E, type: K,
-  listener: (this: E, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void {
+    element: E, type: K,
+    listener: (this: E, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void {
     element.addEventListener(type, listener as any, options);
 }
 
@@ -105,7 +107,7 @@ export function makeDraggable(
     draggableElement.classList.add("draggable");
 
     function grab(pointerId: number, pageGrabPosition: Position) {
-        const { grabbedElement, onDrag, onDrop, onCancel } = onStart(pageGrabPosition);
+        const {grabbedElement, onDrag, onDrop, onCancel} = onStart(pageGrabPosition);
         const dragEnd = new AbortController();
 
         grabbedElement.classList.add("dragging");
@@ -151,7 +153,9 @@ export function makeDraggable(
 
             addEventListener(draggableElement, "pointerup", endDragRunning(onDrop), {signal: dragEnd.signal});
             addEventListener(draggableElement, "pointercancel", endDragRunning(onCancel), {signal: dragEnd.signal});
-            addEventListener(draggableElement, "pointerdown", () => { dragEnd.abort() }, {signal: dragEnd.signal});
+            addEventListener(draggableElement, "pointerdown", () => {
+                dragEnd.abort();
+            }, {signal: dragEnd.signal});
         } else {
             grabbedElement.setPointerCapture(pointerId);
         }
@@ -203,7 +207,7 @@ export class PageBox {
 
     public readonly height: number;
 
-    constructor(x: number, y: number, width: number, height: number,) {
+    constructor(x: number, y: number, width: number, height: number) {
         this.height = height;
         this.width = width;
         this.y = y;
@@ -287,32 +291,8 @@ export function boundingPageBoxOf(controlEnd: Element) {
     );
 }
 
-export function emojiIcon(emoji: string, meaning: string) {
-    return toggleEmoji(emoji, meaning, true);
-}
-
-export function toggleEmoji(emoji: string, meaning: string, active: boolean) {
-    return nodeFromHtmlSource(`<svg class="attribute-icon" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-            <title>${(active ? "" : "non-") + meaning}</title>
-            <text x="50%" y="50%">${emoji}</text>
-            ${active ? "" : "<line x1=\"90%\" y1=\"10%\" x2=\"10%\" y2=\"90%\" />"}
-        </svg>`);
-}
-
-function nodeFromHtmlSource(html: string) {
+export function nodeFromHtmlSource(html: string) {
     const template = document.createElement("template");
     template.innerHTML = html;
     return template.content;
-}
-
-export function lastInnermostChildOf(node: Node): Node {
-    const lastChild = node.lastChild;
-
-    if (lastChild === null) return node;
-
-    return lastInnermostChildOf(lastChild);
-}
-
-export function textContentLengthOf(node: Node) {
-    return node.textContent?.length || 0;
 }

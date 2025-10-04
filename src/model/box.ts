@@ -188,12 +188,12 @@ export class Box extends DiagramElement<BoxEventsMap> {
         );
     }
 
-    hitDelta(anotherBox: Box): Vector2D | null {
+    hitDelta(anotherBox: Box): Vector2D {
         const overlapX = Math.min(this.right - anotherBox.left, anotherBox.right - this.left);
         const overlapY = Math.min(this.bottom - anotherBox.top, anotherBox.bottom - this.top);
 
         if (overlapX <= 0 || overlapY <= 0) {
-            return null;
+            return vector(0, 0);
         }
 
         let deltaX = 0;

@@ -38,11 +38,7 @@ export class Cajita {
     moverseSiChocóCon(unaCaja: Box) {
         if (this._box === unaCaja) return;
 
-        const hitDelta = this._box.hitDelta(unaCaja);
-
-        if (hitDelta === null) return;
-
-        this._box.moveBy(hitDelta);
+        this._box.moveBy(this._box.hitDelta(unaCaja));
     }
 
     private _actualizarPosicion() {

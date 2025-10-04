@@ -4,69 +4,69 @@ import {Box} from "../../src/model/box";
 
 describe("box hit detection", () => {
     describe("non-overlapping boxes", () => {
-        test("returns null when boxes are completely separated horizontally", () => {
+        test("returns zero when boxes are completely separated horizontally", () => {
             const box1 = new Box(2, 2, vector(0, 0));
             const box2 = new Box(2, 2, vector(3, 0));
 
             const delta = box1.hitDelta(box2);
 
-            expect(delta).toBeNull();
+            expect(delta).toEqual(vector(0, 0));
         });
 
-        test("returns null when boxes are completely separated vertically", () => {
+        test("returns zero when boxes are completely separated vertically", () => {
             const box1 = new Box(2, 2, vector(0, 0));
             const box2 = new Box(2, 2, vector(0, 3));
 
             const delta = box1.hitDelta(box2);
 
-            expect(delta).toBeNull();
+            expect(delta).toEqual(vector(0, 0));
         });
 
-        test("returns null when boxes are diagonally separated", () => {
+        test("returns zero when boxes are diagonally separated", () => {
             const box1 = new Box(2, 2, vector(0, 0));
             const box2 = new Box(2, 2, vector(3, 3));
 
             const delta = box1.hitDelta(box2);
 
-            expect(delta).toBeNull();
+            expect(delta).toEqual(vector(0, 0));
         });
     });
 
     describe("touching boxes (edge cases)", () => {
-        test("returns null when boxes are exactly touching on the right edge", () => {
+        test("returns zero when boxes are exactly touching on the right edge", () => {
             const box1 = new Box(2, 2, vector(0, 0));
             const box2 = new Box(2, 2, vector(box1.right, 0));
 
             const delta = box1.hitDelta(box2);
 
-            expect(delta).toBeNull();
+            expect(delta).toEqual(vector(0, 0));
         });
 
-        test("returns null when boxes are exactly touching on the bottom edge", () => {
+        test("returns zero when boxes are exactly touching on the bottom edge", () => {
             const box1 = new Box(2, 2, vector(0, 0));
             const box2 = new Box(2, 2, vector(0, box1.bottom));
 
             const delta = box1.hitDelta(box2);
 
-            expect(delta).toBeNull();
+            expect(delta).toEqual(vector(0, 0));
         });
 
-        test("returns null when boxes are exactly touching on the left edge", () => {
+        test("returns zero when boxes are exactly touching on the left edge", () => {
             const box1 = new Box(2, 2, vector(2, 0));
             const box2 = new Box(2, 2, vector(box1.left - 2, 0));
 
             const delta = box1.hitDelta(box2);
 
-            expect(delta).toBeNull();
+            expect(delta).toEqual(vector(0, 0));
         });
 
-        test("returns null when boxes are exactly touching on the top edge", () => {
+        test("returns zero when boxes are exactly touching on the top edge", () => {
             const box1 = new Box(2, 2, vector(0, 2));
             const box2 = new Box(2, 2, vector(0, box1.top - 2));
 
             const delta = box1.hitDelta(box2);
 
-            expect(delta).toBeNull();
+            expect(delta).toEqual(vector(0, 0));
         });
     });
 
@@ -200,7 +200,7 @@ describe("box hit detection", () => {
 
         box1.moveBy(box1.hitDelta(box2)!);
 
-        expect(box1.hitDelta(box2)).toBeNull();
-        expect(box2.hitDelta(box1)).toBeNull();
+        expect(box1.hitDelta(box2)).toEqual(vector(0, 0));
+        expect(box2.hitDelta(box1)).toEqual(vector(0, 0));
     });
 });

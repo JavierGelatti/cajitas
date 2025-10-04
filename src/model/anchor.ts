@@ -1,5 +1,5 @@
 import {Box, type Edge} from "./box.ts";
-import type {Position} from "./position.ts";
+import type {Vector2D} from "./vector2D.ts";
 import {Line} from "./line.ts";
 import {assertIsFraction, type Fraction} from "./basics/fraction.ts";
 
@@ -18,9 +18,9 @@ export abstract class Anchor {
         return new NearestAnchorFrom(anchors);
     }
 
-    abstract referencePointFor(aBox: Box): Position
+    abstract referencePointFor(aBox: Box): Vector2D
 
-    abstract pointFromTo(aBox: Box, targetPoint: Position): Position;
+    abstract pointFromTo(aBox: Box, targetPoint: Vector2D): Vector2D;
 }
 
 class NearestAnchor extends Anchor {
@@ -28,7 +28,7 @@ class NearestAnchor extends Anchor {
         return aBox.center;
     }
 
-    pointFromTo(aBox: Box, targetPoint: Position) {
+    pointFromTo(aBox: Box, targetPoint: Vector2D) {
         const lineBetweenCenters =
             Line.between(aBox.center, targetPoint);
 
@@ -47,11 +47,11 @@ class PointAtEdgeAnchor extends Anchor {
         this._fraction = fraction;
     }
 
-    pointFromTo(aBox: Box, _targetPoint: Position): Position {
+    pointFromTo(aBox: Box, _targetPoint: Vector2D): Vector2D {
         return this.referencePointFor(aBox);
     }
 
-    referencePointFor(aBox: Box): Position {
+    referencePointFor(aBox: Box): Vector2D {
         return aBox.pointAtEdgeFraction(this._edge, this._fraction);
     }
 }
@@ -64,11 +64,11 @@ class NearestAnchorFrom extends Anchor {
         this._anchors = anchors;
     }
 
-    referencePointFor(aBox: Box): Position {
+    referencePointFor(aBox: Box): Vector2D {
         return aBox.center;
     }
 
-    pointFromTo(aBox: Box, targetPoint: Position): Position {
+    pointFromTo(aBox: Box, targetPoint: Vector2D): Vector2D {
         const referencePoint = Anchor.nearest().pointFromTo(aBox, targetPoint);
 
         const possiblePoints = this._anchors.map(anchor => anchor.pointFromTo(aBox, targetPoint));

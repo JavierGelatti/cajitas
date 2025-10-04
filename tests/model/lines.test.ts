@@ -1,11 +1,11 @@
 import {describe, expect, test} from "vitest";
-import {point} from "../../src/model/position";
+import {vector} from "../../src/model/vector2D.ts";
 import {Line} from "../../src/model/line";
 
 describe("line basic characteristics", () => {
     test("creates a line between two points with different x and y coordinates", () => {
-        const p1 = point(1, 2);
-        const p2 = point(3, 6);
+        const p1 = vector(1, 2);
+        const p2 = vector(3, 6);
 
         const line = Line.between(p1, p2);
 
@@ -14,8 +14,8 @@ describe("line basic characteristics", () => {
     });
 
     test("creates a vertical line when both points have the same x coordinate", () => {
-        const p1 = point(3, 1);
-        const p2 = point(3, 5);
+        const p1 = vector(3, 1);
+        const p2 = vector(3, 5);
 
         const line = Line.between(p1, p2);
 
@@ -24,8 +24,8 @@ describe("line basic characteristics", () => {
     });
 
     test("creates a horizontal line when both points have the same x coordinate", () => {
-        const p1 = point(1, 3);
-        const p2 = point(5, 3);
+        const p1 = vector(1, 3);
+        const p2 = vector(5, 3);
 
         const line = Line.between(p1, p2);
 
@@ -34,7 +34,7 @@ describe("line basic characteristics", () => {
     });
 
     test("cannot create line between same point", () => {
-        const p = point(1, 2);
+        const p = vector(1, 2);
 
         expect(() => Line.between(p, p))
             .toThrowError("Cannot create line with single point");
@@ -59,7 +59,7 @@ describe("line basic characteristics", () => {
 
 describe("line between points calculations", () => {
     test("calculates y for given x on a positive slope line", () => {
-        const line = Line.between(point(0, 0), point(4, 8));
+        const line = Line.between(vector(0, 0), vector(4, 8));
 
         expect(line.yFor(2)).toEqual(4);
         expect(line.yFor(1)).toEqual(2);
@@ -67,7 +67,7 @@ describe("line between points calculations", () => {
     });
 
     test("calculates y for given x on a negative slope line", () => {
-        const line = Line.between(point(0, 8), point(4, 0));
+        const line = Line.between(vector(0, 8), vector(4, 0));
 
         expect(line.yFor(2)).toEqual(4);
         expect(line.yFor(1)).toEqual(6);
@@ -75,7 +75,7 @@ describe("line between points calculations", () => {
     });
 
     test("calculates x for given y on a positive slope line", () => {
-        const line = Line.between(point(0, 0), point(4, 8));
+        const line = Line.between(vector(0, 0), vector(4, 8));
 
         expect(line.xFor(4)).toEqual(2);
         expect(line.xFor(2)).toEqual(1);
@@ -83,7 +83,7 @@ describe("line between points calculations", () => {
     });
 
     test("calculates x for given y on a negative slope line", () => {
-        const line = Line.between(point(0, 8), point(4, 0));
+        const line = Line.between(vector(0, 8), vector(4, 0));
 
         expect(line.xFor(4)).toEqual(2);
         expect(line.xFor(6)).toEqual(1);
@@ -91,7 +91,7 @@ describe("line between points calculations", () => {
     });
 
     test("extrapolates beyond the original points", () => {
-        const line = Line.between(point(1, 2), point(3, 6));
+        const line = Line.between(vector(1, 2), vector(3, 6));
 
         expect(line.yFor(0)).toEqual(0);
         expect(line.yFor(5)).toEqual(10);
@@ -100,7 +100,7 @@ describe("line between points calculations", () => {
     });
 
     test("handles lines with decimal slope correctly", () => {
-        const line = Line.between(point(0, 0), point(3, 2));
+        const line = Line.between(vector(0, 0), vector(3, 2));
 
         expect(line.yFor(1.5)).toBeCloseTo(1);
         expect(line.xFor(1)).toBeCloseTo(1.5);
@@ -144,17 +144,17 @@ describe("vertical line behavior", () => {
 describe("line intersections", () => {
     describe("between two diagonal lines", () => {
         test("intersecting lines with different slopes", () => {
-            const line1 = Line.between(point(0, 0), point(4, 4));
-            const line2 = Line.between(point(0, 4), point(4, 0));
+            const line1 = Line.between(vector(0, 0), vector(4, 4));
+            const line2 = Line.between(vector(0, 4), vector(4, 0));
 
             const intersection = line1.intersectionWith(line2);
 
-            expect(intersection).toEqual(point(2, 2));
+            expect(intersection).toEqual(vector(2, 2));
         });
 
         test("intersection is commutative", () => {
-            const line1 = Line.between(point(0, 0), point(4, 4));
-            const line2 = Line.between(point(0, 4), point(4, 0));
+            const line1 = Line.between(vector(0, 0), vector(4, 4));
+            const line2 = Line.between(vector(0, 4), vector(4, 0));
 
             const intersection1 = line1.intersectionWith(line2);
             const intersection2 = line2.intersectionWith(line1);
@@ -166,40 +166,40 @@ describe("line intersections", () => {
     describe("between diagonal and horizontal lines", () => {
         test("horizontal line intersects diagonal line", () => {
             const horizontalLine = Line.horizontal(4);
-            const diagonalLine = Line.between(point(0, 0), point(4, 8));
+            const diagonalLine = Line.between(vector(0, 0), vector(4, 8));
 
             const intersection = horizontalLine.intersectionWith(diagonalLine);
 
-            expect(intersection).toEqual(point(2, 4));
+            expect(intersection).toEqual(vector(2, 4));
         });
 
         test("diagonal line intersects horizontal", () => {
-            const diagonalLine = Line.between(point(0, 8), point(4, 0));
+            const diagonalLine = Line.between(vector(0, 8), vector(4, 0));
             const horizontalLine = Line.horizontal(4);
 
             const intersection = diagonalLine.intersectionWith(horizontalLine);
 
-            expect(intersection).toEqual(point(2, 4));
+            expect(intersection).toEqual(vector(2, 4));
         });
     });
 
     describe("between diagonal and vertical lines", () => {
         test("vertical line intersects diagonal line", () => {
             const verticalLine = Line.vertical(2);
-            const diagonalLine = Line.between(point(0, 0), point(4, 8));
+            const diagonalLine = Line.between(vector(0, 0), vector(4, 8));
 
             const intersection = verticalLine.intersectionWith(diagonalLine);
 
-            expect(intersection).toEqual(point(2, 4));
+            expect(intersection).toEqual(vector(2, 4));
         });
 
         test("diagonal line intersects vertical line", () => {
-            const diagonalLine = Line.between(point(0, 8), point(4, 0));
+            const diagonalLine = Line.between(vector(0, 8), vector(4, 0));
             const verticalLine = Line.vertical(2);
 
             const intersection = diagonalLine.intersectionWith(verticalLine);
 
-            expect(intersection).toEqual(point(2, 4));
+            expect(intersection).toEqual(vector(2, 4));
         });
     });
 
@@ -210,14 +210,14 @@ describe("line intersections", () => {
 
             const intersection = horizontalLine.intersectionWith(verticalLine);
 
-            expect(intersection).toEqual(point(5, 3));
+            expect(intersection).toEqual(vector(5, 3));
         });
     });
 
     describe("between parallel lines", () => {
         test("cannot get intersection between parallel diagonal lines", () => {
-            const line1 = Line.between(point(0, 0), point(2, 2));
-            const line2 = Line.between(point(3, 0), point(4, 1));
+            const line1 = Line.between(vector(0, 0), vector(2, 2));
+            const line2 = Line.between(vector(3, 0), vector(4, 1));
 
             expect(() => line1.intersectionWith(line2))
                 .toThrowError("Cannot intersect parallel lines");

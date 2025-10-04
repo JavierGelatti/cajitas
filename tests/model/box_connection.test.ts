@@ -1,5 +1,5 @@
 import {describe, expect, test} from "vitest";
-import {point} from "../../src/model/position";
+import {vector} from "../../src/model/vector2D.ts";
 import {Box} from "../../src/model/box";
 import {Anchor} from "../../src/model/anchor";
 import {CHANGE_EVENT_NAME, ChangeEvent} from "../../src/model/events/changeEvent";
@@ -7,24 +7,24 @@ import {CHANGE_EVENT_NAME, ChangeEvent} from "../../src/model/events/changeEvent
 describe("box connections", () => {
     describe("updating", () => {
         test("the connector position is updated whenever the target box position changes", () => {
-            const sourceBox = new Box(2, 2, point(6, 4));
-            const targetBox = new Box(4, 2, point(5, 1));
+            const sourceBox = new Box(2, 2, vector(6, 4));
+            const targetBox = new Box(4, 2, vector(5, 1));
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
 
-            targetBox.moveTo(point(9, 4));
+            targetBox.moveTo(vector(9, 4));
 
             expect(connector.startPoint).toEqual(sourceBox.rightCenter);
             expect(connector.endPoint).toEqual(targetBox.leftCenter);
         });
 
         test("a change event is fired when the target box moves", () => {
-            const sourceBox = new Box(2, 2, point(6, 4));
-            const targetBox = new Box(4, 2, point(5, 1));
+            const sourceBox = new Box(2, 2, vector(6, 4));
+            const targetBox = new Box(4, 2, vector(5, 1));
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
             let receivedEvent: ChangeEvent | undefined;
             connector.addEventListener("change", event => receivedEvent = event);
 
-            targetBox.moveTo(point(9, 4));
+            targetBox.moveTo(vector(9, 4));
 
             expect(receivedEvent).not.toBeUndefined();
             expect(receivedEvent!.type).toEqual(CHANGE_EVENT_NAME);
@@ -33,24 +33,24 @@ describe("box connections", () => {
         });
 
         test("the connector position is updated whenever the source box position changes", () => {
-            const sourceBox = new Box(2, 2, point(0, 0));
-            const targetBox = new Box(4, 2, point(9, 4));
+            const sourceBox = new Box(2, 2, vector(0, 0));
+            const targetBox = new Box(4, 2, vector(9, 4));
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
 
-            sourceBox.moveTo(point(6, 4));
+            sourceBox.moveTo(vector(6, 4));
 
             expect(connector.startPoint).toEqual(sourceBox.rightCenter);
             expect(connector.endPoint).toEqual(targetBox.leftCenter);
         });
 
         test("a change event is fired when the source box moves", () => {
-            const sourceBox = new Box(2, 2, point(0, 0));
-            const targetBox = new Box(4, 2, point(6, 4));
+            const sourceBox = new Box(2, 2, vector(0, 0));
+            const targetBox = new Box(4, 2, vector(6, 4));
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
             let receivedEvent: ChangeEvent | undefined;
             connector.addEventListener("change", event => receivedEvent = event);
 
-            sourceBox.moveTo(point(6, 4));
+            sourceBox.moveTo(vector(6, 4));
 
             expect(receivedEvent).not.toBeUndefined();
             expect(receivedEvent!.type).toEqual(CHANGE_EVENT_NAME);
@@ -61,8 +61,8 @@ describe("box connections", () => {
 
     describe("straight line to nearest point", () => {
         test("when the boxes are vertically aligned", () => {
-            const sourceBox = new Box(2, 2, point(6, 4));
-            const targetBox = new Box(4, 2, point(5, 1));
+            const sourceBox = new Box(2, 2, vector(6, 4));
+            const targetBox = new Box(4, 2, vector(5, 1));
 
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
 
@@ -71,8 +71,8 @@ describe("box connections", () => {
         });
 
         test("when the boxes are horizontally aligned", () => {
-            const sourceBox = new Box(2, 2, point(6, 4));
-            const targetBox = new Box(4, 2, point(9, 4));
+            const sourceBox = new Box(2, 2, vector(6, 4));
+            const targetBox = new Box(4, 2, vector(9, 4));
 
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
 
@@ -81,8 +81,8 @@ describe("box connections", () => {
         });
 
         test("when the line hits exactly to the top-left or bottom-right corners of the boxes", () => {
-            const sourceBox = new Box(4, 2, point(4, 4));
-            const targetBox = new Box(4, 2, point(10, 7));
+            const sourceBox = new Box(4, 2, vector(4, 4));
+            const targetBox = new Box(4, 2, vector(10, 7));
 
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
 
@@ -91,8 +91,8 @@ describe("box connections", () => {
         });
 
         test("when the line hits exactly to the bottom-left or top-right corners of the boxes", () => {
-            const sourceBox = new Box(4, 2, point(4, 4));
-            const targetBox = new Box(4, 2, point(10, 1));
+            const sourceBox = new Box(4, 2, vector(4, 4));
+            const targetBox = new Box(4, 2, vector(10, 1));
 
             const connector = sourceBox.straightConnectorTo(targetBox, Anchor.nearest(), Anchor.nearest());
 
@@ -101,20 +101,20 @@ describe("box connections", () => {
         });
 
         test("connects both boxes when the heading sides are not aligned", () => {
-            const box1 = new Box(4, 5, point(2, 1));
-            const box2 = new Box(3, 2, point(7, 7));
+            const box1 = new Box(4, 5, vector(2, 1));
+            const box2 = new Box(3, 2, vector(7, 7));
 
             const connector = box1.straightConnectorTo(box2, Anchor.nearest(), Anchor.nearest());
 
-            expect(connector.startPoint).toEqual(point(6, 5.5));
-            expect(connector.endPoint).toEqual(point(7.5, 7));
+            expect(connector.startPoint).toEqual(vector(6, 5.5));
+            expect(connector.endPoint).toEqual(vector(7.5, 7));
         });
     });
 
     describe("straight line to specific edge point", () => {
         test("when the boxes are vertically aligned", () => {
-            const sourceBox = new Box(2, 2, point(6, 4));
-            const targetBox = new Box(4, 2, point(5, 1));
+            const sourceBox = new Box(2, 2, vector(6, 4));
+            const targetBox = new Box(4, 2, vector(5, 1));
 
             const connector = sourceBox.straightConnectorTo(
                 targetBox,
@@ -127,8 +127,8 @@ describe("box connections", () => {
         });
 
         test("when the boxes are horizontally aligned", () => {
-            const sourceBox = new Box(2, 2, point(6, 4));
-            const targetBox = new Box(4, 2, point(9, 4));
+            const sourceBox = new Box(2, 2, vector(6, 4));
+            const targetBox = new Box(4, 2, vector(9, 4));
 
             const connector = sourceBox.straightConnectorTo(
                 targetBox,
@@ -141,7 +141,7 @@ describe("box connections", () => {
         });
 
         test("cannot create anchors if fraction is not between 0 and 1", () => {
-            const aBox = new Box(2, 2, point(1, 1));
+            const aBox = new Box(2, 2, vector(1, 1));
 
             expect(() => {
                 aBox.topEdgeAnchorAtFraction(-0.01);
@@ -155,8 +155,8 @@ describe("box connections", () => {
 
     describe("straight line to nearest anchor point", () => {
         test("connects both boxes rounding to the nearest anchor point", () => {
-            const box1 = new Box(4, 5, point(2, 1));
-            const box2 = new Box(3, 2, point(7, 7));
+            const box1 = new Box(4, 5, vector(2, 1));
+            const box2 = new Box(3, 2, vector(7, 7));
 
             const connector = box1.straightConnectorTo(
                 box2,
@@ -171,8 +171,8 @@ describe("box connections", () => {
                 ]),
             );
 
-            expect(connector.startPoint).toEqual(point(6, 5));
-            expect(connector.endPoint).toEqual(point(8, 7));
+            expect(connector.startPoint).toEqual(vector(6, 5));
+            expect(connector.endPoint).toEqual(vector(8, 7));
         });
     });
 });

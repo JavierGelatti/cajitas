@@ -1,12 +1,12 @@
-import {Position} from "./position.ts";
+import {Vector2D} from "./vector2D.ts";
 
 import type {Fraction} from "./basics/fraction.ts";
 
 export class LineSegment {
-    private readonly _from: Position;
-    private readonly _to: Position;
+    private readonly _from: Vector2D;
+    private readonly _to: Vector2D;
 
-    constructor(from: Position, to: Position) {
+    constructor(from: Vector2D, to: Vector2D) {
         this._from = from;
         this._to = to;
     }

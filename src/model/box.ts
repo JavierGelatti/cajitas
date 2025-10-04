@@ -1,4 +1,4 @@
-import {point, Position} from "./position.ts";
+import {vector, Vector2D} from "./vector2D.ts";
 import {Line} from "./line.ts";
 import {TRANSLATION_EVENT_NAME, TranslationEvent} from "./events/translationEvent.ts";
 import {Anchor} from "./anchor.ts";
@@ -22,21 +22,21 @@ export class Box extends DiagramElement<BoxEventsMap> {
     public readonly width: number;
     public readonly height: number;
 
-    constructor(width: number, height: number, position: Position) {
+    constructor(width: number, height: number, position: Vector2D) {
         super();
         this.width = width;
         this.height = height;
         this._position = position;
     }
 
-    private _position: Position;
+    private _position: Vector2D;
 
-    get position(): Position {
+    get position(): Vector2D {
         return this.topLeft;
     }
 
-    get size(): Position {
-        return point(this.width, this.height);
+    get size(): Vector2D {
+        return vector(this.width, this.height);
     }
 
     get top() {
@@ -60,47 +60,47 @@ export class Box extends DiagramElement<BoxEventsMap> {
     }
 
     get topCenter() {
-        return point(this._position.x + this.width / 2, this._position.y);
+        return vector(this._position.x + this.width / 2, this._position.y);
     }
 
     get topRight() {
-        return point(this._position.x + this.width, this._position.y);
+        return vector(this._position.x + this.width, this._position.y);
     }
 
     get bottomLeft() {
-        return point(this._position.x, this._position.y + this.height);
+        return vector(this._position.x, this._position.y + this.height);
     }
 
     get bottomCenter() {
-        return point(this._position.x + this.width / 2, this._position.y + this.height);
+        return vector(this._position.x + this.width / 2, this._position.y + this.height);
     }
 
     get bottomRight() {
-        return point(this._position.x + this.width, this._position.y + this.height);
+        return vector(this._position.x + this.width, this._position.y + this.height);
     }
 
     get leftCenter() {
-        return point(
+        return vector(
             this._position.x,
             this._position.y + this.height / 2,
         );
     }
 
     get rightCenter() {
-        return point(
+        return vector(
             this._position.x + this.width,
             this._position.y + this.height / 2,
         );
     }
 
     get center() {
-        return point(
+        return vector(
             this._position.x + this.width / 2,
             this._position.y + this.height / 2,
         );
     }
 
-    edgeHeading(aPoint: Position): Edge {
+    edgeHeading(aPoint: Vector2D): Edge {
         const firstDiagonal = Line.between(this.topLeft, this.bottomRight);
         const secondDiagonal = Line.between(this.bottomLeft, this.topRight);
         const belowFirstDiagonal = firstDiagonal.yFor(aPoint.x) < aPoint.y;
@@ -127,11 +127,11 @@ export class Box extends DiagramElement<BoxEventsMap> {
         }
     }
 
-    moveBy(delta: Position) {
+    moveBy(delta: Vector2D) {
         this.moveTo(this._position.plus(delta));
     }
 
-    moveTo(newPosition: Position) {
+    moveTo(newPosition: Vector2D) {
         const oldPosition = this._position;
         if (oldPosition.equals(newPosition)) return;
 
@@ -188,7 +188,7 @@ export class Box extends DiagramElement<BoxEventsMap> {
         );
     }
 
-    hitDelta(anotherBox: Box): Position | null {
+    hitDelta(anotherBox: Box): Vector2D | null {
         const overlapX = Math.min(this.right - anotherBox.left, anotherBox.right - this.left);
         const overlapY = Math.min(this.bottom - anotherBox.top, anotherBox.bottom - this.top);
 
@@ -200,32 +200,26 @@ export class Box extends DiagramElement<BoxEventsMap> {
         let deltaY = 0;
 
         if (overlapX < overlapY) {
-            // Separate horizontally
             const rect1CenterX = this.center.x;
             const rect2CenterX = anotherBox.center.x;
 
             if (rect1CenterX < rect2CenterX) {
-                // Move rect1 to the left
                 deltaX = -overlapX;
             } else {
-                // Move rect1 to the right
                 deltaX = overlapX;
             }
         } else {
-            // Separate vertically
             const rect1CenterY = this.center.y;
             const rect2CenterY = anotherBox.center.y;
 
             if (rect1CenterY < rect2CenterY) {
-                // Move rect1 up
                 deltaY = -overlapY;
             } else {
-                // Move rect1 down
                 deltaY = overlapY;
             }
         }
 
-        return point(deltaX, deltaY);
+        return vector(deltaX, deltaY);
     }
 }
 

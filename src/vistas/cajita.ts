@@ -1,13 +1,13 @@
 import {Box} from "../model/box.ts";
 import type {TranslationEvent} from "../model/events/translationEvent.ts";
-import {Position} from "../model/position.ts";
+import {Vector2D} from "../model/vector2D.ts";
 import {createSvgElement, makeDraggable} from "./basics/dom.ts";
 
 export class Cajita {
     private readonly _elemento: SVGRectElement;
     private readonly _box: Box;
 
-    constructor(ancho: number, alto: number, posicion: Position) {
+    constructor(ancho: number, alto: number, posicion: Vector2D) {
         this._box = new Box(ancho, alto, posicion);
         this._elemento = createSvgElement("rect", {
             class: "cajita",

@@ -1,4 +1,4 @@
-export class Position {
+export class Vector2D {
     public readonly x: number;
     public readonly y: number;
 
@@ -7,36 +7,36 @@ export class Position {
         this.x = x;
     }
 
-    deltaToReach(anotherPosition: Position) {
+    deltaToReach(anotherPosition: Vector2D) {
         return anotherPosition.minus(this);
     }
 
-    plus(anotherPosition: Position) {
+    plus(anotherPosition: Vector2D) {
         return this._zipWith(anotherPosition, (a, b) => a + b);
     }
 
-    minus(anotherPosition: Position) {
+    minus(anotherPosition: Vector2D) {
         return this._zipWith(anotherPosition, (a, b) => a - b);
     }
 
-    distanceTo(anotherPosition: Position) {
+    distanceTo(anotherPosition: Vector2D) {
         return this.minus(anotherPosition).magnitude();
     }
 
-    max(anotherPosition: Position) {
+    max(anotherPosition: Vector2D) {
         return this._zipWith(anotherPosition, Math.max);
     }
 
-    min(anotherPosition: Position) {
+    min(anotherPosition: Vector2D) {
         return this._zipWith(anotherPosition, Math.min);
     }
 
-    dot(anotherPosition: Position) {
+    dot(anotherPosition: Vector2D) {
         return this._zipWith(anotherPosition, (a, b) => a * b);
     }
 
     map(transformation: (coordinate: number) => number) {
-        return point(
+        return vector(
             transformation(this.x),
             transformation(this.y),
         );
@@ -55,7 +55,7 @@ export class Position {
         return this.map(coordinate => coordinate * number);
     }
 
-    equals(anotherPosition: Position) {
+    equals(anotherPosition: Vector2D) {
         return this.x === anotherPosition.x && this.y === anotherPosition.y;
     }
 
@@ -63,14 +63,14 @@ export class Position {
         return this.map(Math.round);
     }
 
-    private _zipWith(anotherPosition: Position, combiner: (leftCoordinate: number, rightCoordinate: number) => number) {
-        return point(
+    private _zipWith(anotherPosition: Vector2D, combiner: (leftCoordinate: number, rightCoordinate: number) => number) {
+        return vector(
             combiner(this.x, anotherPosition.x),
             combiner(this.y, anotherPosition.y),
         );
     }
 }
 
-export function point(x: number, y: number) {
-    return new Position(x, y);
+export function vector(x: number, y: number) {
+    return new Vector2D(x, y);
 }

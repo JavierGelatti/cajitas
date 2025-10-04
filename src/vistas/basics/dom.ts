@@ -1,4 +1,4 @@
-import {point, Position} from "../../model/position.ts";
+import {vector, Vector2D} from "../../model/vector2D.ts";
 
 export type PointerEventType
     = "pointerover"
@@ -96,24 +96,24 @@ function addEventListener<E extends HTMLElement | SVGElement, K extends keyof (H
 
 export type DragHandler = {
     grabbedElement: HTMLElement | SVGElement,
-    onDrag?: (cursorPosition: Position, delta: Position) => void,
-    onDrop?: (cursorPosition: Position) => void,
+    onDrag?: (cursorPosition: Vector2D, delta: Vector2D) => void,
+    onDrop?: (cursorPosition: Vector2D) => void,
     onCancel?: () => void,
 };
 
 export function makeDraggable(
     draggableElement: HTMLElement | SVGElement,
-    onStart: (pageGrabPosition: Position) => DragHandler,
+    onStart: (pageGrabPosition: Vector2D) => DragHandler,
 ) {
     draggableElement.classList.add("draggable");
 
-    function grab(pointerId: number, pageGrabPosition: Position) {
+    function grab(pointerId: number, pageGrabPosition: Vector2D) {
         const {grabbedElement, onDrag, onDrop, onCancel} = onStart(pageGrabPosition);
         const dragEnd = new AbortController();
 
         grabbedElement.classList.add("dragging");
 
-        let lastPosition: Position = pageGrabPosition;
+        let lastPosition: Vector2D = pageGrabPosition;
 
         addEventListener(grabbedElement, "pointermove", (event: PointerEvent) => {
             if (event.pointerId !== pointerId) return;
@@ -127,7 +127,7 @@ export function makeDraggable(
             event.preventDefault();
         }, {signal: dragEnd.signal});
 
-        const endDragRunning = (callback?: (cursorPosition: Position) => void) => (event: PointerEvent) => {
+        const endDragRunning = (callback?: (cursorPosition: Vector2D) => void) => (event: PointerEvent) => {
             if (event.pointerId !== pointerId) return;
 
             callback?.(pagePositionOf(event));
@@ -175,26 +175,26 @@ export function makeDraggable(
 }
 
 export function scrollPosition() {
-    return point(window.scrollX, window.scrollY);
+    return vector(window.scrollX, window.scrollY);
 }
 
-export function clientPositionOf(event: MouseEvent): Position {
-    return point(event.clientX, event.clientY);
+export function clientPositionOf(event: MouseEvent): Vector2D {
+    return vector(event.clientX, event.clientY);
 }
 
-export function pagePositionOf(event: MouseEvent): Position {
+export function pagePositionOf(event: MouseEvent): Vector2D {
     return clientPositionOf(event).plus(scrollPosition());
 }
 
-export function asClientLocation(position: Position): ClientLocation {
+export function asClientLocation(position: Vector2D): ClientLocation {
     return {clientX: position.x, clientY: position.y};
 }
 
-export function asPosition(clientLocation: ClientLocation): Position {
-    return point(clientLocation.clientX, clientLocation.clientY);
+export function asPosition(clientLocation: ClientLocation): Vector2D {
+    return vector(clientLocation.clientX, clientLocation.clientY);
 }
 
-export function elementsAt(pagePosition: Position): Element[] {
+export function elementsAt(pagePosition: Vector2D): Element[] {
     const clientPosition = pagePosition.minus(scrollPosition());
     return document.elementsFromPoint(clientPosition.x, clientPosition.y);
 }
@@ -216,11 +216,11 @@ export class PageBox {
     }
 
     get position() {
-        return point(this.x, this.y);
+        return vector(this.x, this.y);
     }
 
     get size() {
-        return point(this.width, this.height);
+        return vector(this.width, this.height);
     }
 
     get top() {
@@ -240,22 +240,22 @@ export class PageBox {
     }
 
     center() {
-        return point(this.x + this.width / 2, this.y + this.height / 2);
+        return vector(this.x + this.width / 2, this.y + this.height / 2);
     }
 
     origin() {
-        return point(this.x, this.y);
+        return vector(this.x, this.y);
     }
 
     extent() {
-        return point(this.width, this.height);
+        return vector(this.width, this.height);
     }
 
     centerOffset() {
         return this.extent().map(c => c / 2);
     }
 
-    contains(position: Position) {
+    contains(position: Vector2D) {
         return this._areOrdered(this.left, position.x, this.right) &&
             this._areOrdered(this.top, position.y, this.bottom);
     }
@@ -271,14 +271,14 @@ export function positionOfDomElement(element: Element) {
 
 export function clientPositionOfDomElement(element: Element) {
     const clientRect = element.getBoundingClientRect();
-    return point(clientRect.x, clientRect.y);
+    return vector(clientRect.x, clientRect.y);
 }
 
 export function sizeOfDomElement(element: Element) {
     return boundingPageBoxOf(element).size;
 }
 
-export function getElementAt(position: Position) {
+export function getElementAt(position: Vector2D) {
     return document.elementFromPoint(position.x, position.y);
 }
 

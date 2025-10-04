@@ -1,7 +1,7 @@
-import {point, Position} from "./position.ts";
+import {vector, Vector2D} from "./vector2D.ts";
 
 export abstract class Line {
-    static between(p1: Position, p2: Position): Line {
+    static between(p1: Vector2D, p2: Vector2D): Line {
         if (p1.x == p2.x && p1.y == p2.y) throw new Error("Cannot create line with single point");
 
         if (p1.x == p2.x) return Line.vertical(p1.x);
@@ -25,25 +25,25 @@ export abstract class Line {
 
     abstract xFor(y: number): number
 
-    intersectionWith(anotherLine: Line): Position {
+    intersectionWith(anotherLine: Line): Vector2D {
         if (this.isParallelTo(anotherLine)) throw new Error("Cannot intersect parallel lines");
 
         return this._intersectionWithNonParallelLine(anotherLine);
     }
 
-    protected abstract _intersectionWithNonParallelLine(anotherLine: Line): Position
+    protected abstract _intersectionWithNonParallelLine(anotherLine: Line): Vector2D
 
-    abstract intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Position
+    abstract intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Vector2D
 
     abstract get slope(): number
 }
 
 class LineBetweenPoints extends Line {
-    private readonly _p: Position;
+    private readonly _p: Vector2D;
     private readonly _dx: number;
     private readonly _dy: number;
 
-    constructor(p1: Position, p2: Position) {
+    constructor(p1: Vector2D, p2: Vector2D) {
         super();
         this._dy = p2.y - p1.y;
         this._dx = p2.x - p1.x;
@@ -62,13 +62,13 @@ class LineBetweenPoints extends Line {
         return (y - this._p.y) * this._dx / this._dy + this._p.x;
     }
 
-    protected _intersectionWithNonParallelLine(anotherLine: Line): Position {
+    protected _intersectionWithNonParallelLine(anotherLine: Line): Vector2D {
         return anotherLine.intersectionWithLineBetweenPoints(this);
     }
 
-    intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Position {
+    intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Vector2D {
         const intersectionX = (this.slope * this._p.x - anotherLine.slope * anotherLine._p.x + anotherLine._p.y - this._p.y) / (this.slope - anotherLine.slope);
-        return point(intersectionX, this.yFor(intersectionX));
+        return vector(intersectionX, this.yFor(intersectionX));
     }
 }
 
@@ -92,11 +92,11 @@ class HorizontalLine extends Line {
         throw new Error("Cannot get x coordinate from horizontal line");
     }
 
-    protected _intersectionWithNonParallelLine(anotherLine: Line): Position {
-        return point(anotherLine.xFor(this._y), this._y);
+    protected _intersectionWithNonParallelLine(anotherLine: Line): Vector2D {
+        return vector(anotherLine.xFor(this._y), this._y);
     }
 
-    intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Position {
+    intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Vector2D {
         return this.intersectionWith(anotherLine);
     }
 }
@@ -121,11 +121,11 @@ class VerticalLine extends Line {
         return this._x;
     }
 
-    protected _intersectionWithNonParallelLine(anotherLine: Line): Position {
-        return point(this._x, anotherLine.yFor(this._x));
+    protected _intersectionWithNonParallelLine(anotherLine: Line): Vector2D {
+        return vector(this._x, anotherLine.yFor(this._x));
     }
 
-    intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Position {
+    intersectionWithLineBetweenPoints(anotherLine: LineBetweenPoints): Vector2D {
         return this.intersectionWith(anotherLine);
     }
 }

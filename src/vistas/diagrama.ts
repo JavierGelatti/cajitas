@@ -1,6 +1,6 @@
 import {Cajita} from "./cajita.ts";
 import {createSvgElement} from "./basics/dom.ts";
-import {Position} from "../model/position.ts";
+import {Vector2D} from "../model/vector2D.ts";
 import type {TranslationEvent} from "../model/events/translationEvent.ts";
 import {Flechita} from "./flechita.ts";
 
@@ -19,7 +19,7 @@ export class Diagrama {
         return this._elemento;
     }
 
-    agregarCajitaEn(unaPosicion: Position) {
+    agregarCajitaEn(unaPosicion: Vector2D) {
         const cajita = new Cajita(120, 100, unaPosicion);
         cajita.alMoverse(event => this._alMoverseUnaCajita(event));
 

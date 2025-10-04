@@ -193,7 +193,7 @@ export class Box extends DiagramElement<BoxEventsMap> {
         const overlapY = Math.min(this.bottom - anotherBox.top, anotherBox.bottom - this.top);
 
         if (overlapX <= 0 || overlapY <= 0) {
-            return vector(0, 0);
+            return Vector2D.ZERO;
         }
 
         let deltaX = 0;

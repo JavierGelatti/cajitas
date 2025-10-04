@@ -1,4 +1,6 @@
 export class Vector2D {
+    static readonly ZERO: Vector2D = new Vector2D(0 ,0);
+
     public readonly x: number;
     public readonly y: number;
 

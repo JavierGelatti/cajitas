@@ -189,37 +189,30 @@ export class Box extends DiagramElement<BoxEventsMap> {
     }
 
     hitDelta(anotherBox: Box): Vector2D {
+        const DEFAULT_DIRECTION = 1;
+        const overlap = this.overlapSizeWith(anotherBox);
+
+        if (overlap.isZero()) return Vector2D.ZERO;
+
+        const movementAxis = overlap.x < overlap.y ?
+            Vector2D.X_AXIS : Vector2D.Y_AXIS;
+
+        const centerDifference = this.center.minus(anotherBox.center);
+        const deltaDirection = centerDifference
+            .sign()
+            .map(c => c || DEFAULT_DIRECTION)
+            .dot(movementAxis);
+
+        return deltaDirection.dot(overlap);
+    }
+
+    private overlapSizeWith(anotherBox: Box) {
         const overlapX = Math.min(this.right - anotherBox.left, anotherBox.right - this.left);
         const overlapY = Math.min(this.bottom - anotherBox.top, anotherBox.bottom - this.top);
 
-        if (overlapX <= 0 || overlapY <= 0) {
-            return Vector2D.ZERO;
-        }
+        if (overlapX <= 0 || overlapY <= 0) return Vector2D.ZERO;
 
-        let deltaX = 0;
-        let deltaY = 0;
-
-        if (overlapX < overlapY) {
-            const rect1CenterX = this.center.x;
-            const rect2CenterX = anotherBox.center.x;
-
-            if (rect1CenterX < rect2CenterX) {
-                deltaX = -overlapX;
-            } else {
-                deltaX = overlapX;
-            }
-        } else {
-            const rect1CenterY = this.center.y;
-            const rect2CenterY = anotherBox.center.y;
-
-            if (rect1CenterY < rect2CenterY) {
-                deltaY = -overlapY;
-            } else {
-                deltaY = overlapY;
-            }
-        }
-
-        return vector(deltaX, deltaY);
+        return vector(overlapX, overlapY);
     }
 }
 

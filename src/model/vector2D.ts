@@ -1,40 +1,42 @@
 export class Vector2D {
     static readonly ZERO: Vector2D = new Vector2D(0 ,0);
+    static readonly X_AXIS: Vector2D = new Vector2D(1 ,0);
+    static readonly Y_AXIS: Vector2D = new Vector2D(0 ,1);
 
     public readonly x: number;
     public readonly y: number;
 
     constructor(x: number, y: number) {
-        this.y = y;
-        this.x = x;
+        this.y = y || 0;
+        this.x = x || 0;
     }
 
-    deltaToReach(anotherPosition: Vector2D) {
-        return anotherPosition.minus(this);
+    deltaToReach(anotherVector: Vector2D) {
+        return anotherVector.minus(this);
     }
 
-    plus(anotherPosition: Vector2D) {
-        return this._zipWith(anotherPosition, (a, b) => a + b);
+    plus(anotherVector: Vector2D) {
+        return this._zipWith(anotherVector, (a, b) => a + b);
     }
 
-    minus(anotherPosition: Vector2D) {
-        return this._zipWith(anotherPosition, (a, b) => a - b);
+    minus(anotherVector: Vector2D) {
+        return this._zipWith(anotherVector, (a, b) => a - b);
     }
 
-    distanceTo(anotherPosition: Vector2D) {
-        return this.minus(anotherPosition).magnitude();
+    distanceTo(anotherVector: Vector2D) {
+        return this.minus(anotherVector).magnitude();
     }
 
-    max(anotherPosition: Vector2D) {
-        return this._zipWith(anotherPosition, Math.max);
+    max(anotherVector: Vector2D) {
+        return this._zipWith(anotherVector, Math.max);
     }
 
-    min(anotherPosition: Vector2D) {
-        return this._zipWith(anotherPosition, Math.min);
+    min(anotherVector: Vector2D) {
+        return this._zipWith(anotherVector, Math.min);
     }
 
-    dot(anotherPosition: Vector2D) {
-        return this._zipWith(anotherPosition, (a, b) => a * b);
+    dot(anotherVector: Vector2D) {
+        return this._zipWith(anotherVector, (a, b) => a * b);
     }
 
     map(transformation: (coordinate: number) => number) {
@@ -57,19 +59,27 @@ export class Vector2D {
         return this.map(coordinate => coordinate * number);
     }
 
-    equals(anotherPosition: Vector2D) {
-        return this.x === anotherPosition.x && this.y === anotherPosition.y;
+    equals(anotherVector: Vector2D) {
+        return this.x === anotherVector.x && this.y === anotherVector.y;
     }
 
     round() {
         return this.map(Math.round);
     }
 
-    private _zipWith(anotherPosition: Vector2D, combiner: (leftCoordinate: number, rightCoordinate: number) => number) {
+    private _zipWith(anotherVector: Vector2D, combiner: (leftCoordinate: number, rightCoordinate: number) => number) {
         return vector(
-            combiner(this.x, anotherPosition.x),
-            combiner(this.y, anotherPosition.y),
+            combiner(this.x, anotherVector.x),
+            combiner(this.y, anotherVector.y),
         );
+    }
+
+    sign() {
+        return this.map(Math.sign);
+    }
+
+    isZero() {
+        return this.x == 0 && this.y == 0;
     }
 }
 
